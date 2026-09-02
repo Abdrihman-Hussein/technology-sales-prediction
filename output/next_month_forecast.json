@@ -1,0 +1,24 @@
+{
+  "forecast_month": "2026-09",
+  "last_observed_date": "2026-08-31",
+  "predicted_revenue_usd": 182552.85,
+  "lower_90_usd": 160674.91,
+  "upper_90_usd": 204430.78,
+  "recent_28_day_baseline_usd": 192337.5,
+  "backtest": {
+    "test_days": 21,
+    "mae_usd": 1996.46,
+    "rmse_usd": 2422.28
+  },
+  "data_range": {
+    "start": "2026-06-01",
+    "end": "2026-08-31",
+    "observed_days": 92
+  },
+  "method": "Random Forest with calendar, lag-1, lag-7, and trailing-7-day features",
+  "limitations": [
+    "Only 92 days of historical data are available.",
+    "This is a short-horizon planning forecast, not a causal demand model.",
+    "The interval reflects backtest residual uncertainty and is not a guarantee."
+  ]
+}

@@ -1,0 +1,80 @@
+{
+  "project": "Kaamil Technology Sales \u2014 Revenue Prediction",
+  "target": "Total_Revenue_USD",
+  "objective": "Predict transaction revenue using only pre-sale or checkout-time information.",
+  "excluded_leakage_fields": [
+    "Total_Cost_USD",
+    "Profit_USD",
+    "Profit_Margin",
+    "Log_Revenue",
+    "Transaction_ID",
+    "Customer_Name"
+  ],
+  "split": {
+    "method": "chronological",
+    "cutoff": "2026-08-13",
+    "train_rows": 796,
+    "test_rows": 204
+  },
+  "data_quality": {
+    "raw_rows": 1000,
+    "rows_after_cleaning": 1000,
+    "duplicate_transactions_removed": 0,
+    "invalid_rows_removed": 0,
+    "raw_columns": [
+      "Transaction_ID",
+      "Date",
+      "Customer_Name",
+      "Location",
+      "Category",
+      "Product_Name",
+      "Quantity",
+      "Unit_Cost_USD",
+      "Unit_Price_USD",
+      "Total_Revenue_USD",
+      "Total_Cost_USD",
+      "Profit_USD",
+      "Payment_Method",
+      "Sales_Rep"
+    ],
+    "missing_values_after_cleaning": {},
+    "date_min": "2026-06-01",
+    "date_max": "2026-08-31"
+  },
+  "metrics": {
+    "ExtraTrees": {
+      "mae_usd": 16.6675,
+      "rmse_usd": 104.0274,
+      "r2": 0.964295,
+      "bias_usd": -9.2179,
+      "mape_pct": 1.4155
+    },
+    "RandomForest": {
+      "mae_usd": 17.6692,
+      "rmse_usd": 77.0146,
+      "r2": 0.98043,
+      "bias_usd": -11.8783,
+      "mape_pct": 2.8805
+    },
+    "HistGradientBoosting": {
+      "mae_usd": 30.5949,
+      "rmse_usd": 92.024,
+      "r2": 0.972059,
+      "bias_usd": -5.7435,
+      "mape_pct": 6.3221
+    },
+    "BusinessRule_Quantity_x_Price": {
+      "mae_usd": 0.0,
+      "rmse_usd": 0.0,
+      "r2": 1.0,
+      "bias_usd": 0.0,
+      "mape_pct": 0.0
+    }
+  },
+  "selected_model": "RandomForest",
+  "limitations": [
+    "The dataset covers only 92 dates in 2026.",
+    "Quantity \u00d7 Unit_Price is an exact business rule in this data, so ML should be judged against that baseline.",
+    "This is a transaction-level predictor, not a demand forecast."
+  ]
+}

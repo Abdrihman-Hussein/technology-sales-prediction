@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaamil Technology Sales — Analytics Dashboard</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  body { background: #0f172a; color: #e2e8f0; }
+  .kpi-card { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid #334155; border-radius: 16px; padding: 20px; transition: transform 0.2s, box-shadow 0.2s; }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(99,102,241,0.15); }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 24px; }
+  .card-header { font-size: 14px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .glow-blue { box-shadow: 0 0 20px rgba(59,130,246,0.2); }
+  .glow-green { box-shadow: 0 0 20px rgba(16,185,129,0.2); }
+  .glow-amber { box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+  .glow-purple { box-shadow: 0 0 20px rgba(168,85,247,0.2); }
+  .stat-value { font-size: 28px; font-weight: 700; line-height: 1.1; }
+  .stat-label { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+  .fade-in { animation: fadeIn 0.6s ease-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #1e293b; }
+  ::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+</style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-50">
+  <div class="max-w-[1600px] mx-auto px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-lg">K</div>
+      <div>
+        <h1 class="text-xl font-bold text-white tracking-tight">Kaamil Technology Sales</h1>
+        <p class="text-xs text-slate-400">Full Data Science &amp; ML Analytics Dashboard</p>
+      </div>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="badge bg-green-500/20 text-green-400">● Live</span>
+      <span class="text-xs text-slate-500">2026-06-01 → 2026-08-31</span>
+      <span class="badge bg-blue-500/20 text-blue-400">1000 Transactions</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-[1600px] mx-auto px-6 py-8 space-y-8">
+
+  <!-- KPI Cards -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 fade-in">
+    <div class="kpi-card glow-blue">
+      <div class="flex items-center justify-between mb-2">
+        <span class="stat-label">Total Revenue</span>
+        <span class="text-blue-400 text-2xl">💰</span>
+      </div>
+      <div class="stat-value text-blue-400">$601,030</div>
+      <div class="stat-label mt-1">1000 orders · 8 cities</div>
+    </div>
+    <div class="kpi-card glow-green">
+      <div class="flex items-center justify-between mb-2">
+        <span class="stat-label">Total Profit</span>
+        <span class="text-green-400 text-2xl">📈</span>
+      </div>
+      <div class="stat-value text-green-400">$115,630</div>
+      <div class="stat-label mt-1">Profit margin <span class="text-green-400 font-semibold">24.2%</span></div>
+    </div>
+    <div class="kpi-card glow-amber">
+      <div class="flex items-center justify-between mb-2">
+        <span class="stat-label">Avg Order Value</span>
+        <span class="text-amber-400 text-2xl">🛒</span>
+      </div>
+      <div class="stat-value text-amber-400">$601</div>
+      <div class="stat-label mt-1">24.2% avg margin</div>
+    </div>
+    <div class="kpi-card glow-purple">
+      <div class="flex items-center justify-between mb-2">
+        <span class="stat-label">Best ML Model</span>
+        <span class="text-purple-400 text-2xl">🤖</span>
+      </div>
+      <div class="stat-value text-purple-400">RandomForest</div>
+      <div class="stat-label mt-1">R² = <span class="text-purple-400 font-semibold">0.9804</span> · 11 features</div>
+    </div>
+  </section>
+
+  <!-- Revenue by Category + Monthly Trend -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+    <div class="card">
+      <div class="card-header">📊 Revenue by Category</div>
+      <div id="chart-category-revenue" style="height:320px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">📈 Monthly Revenue Trend</div>
+      <div id="chart-monthly-trend" style="height:320px;"></div>
+    </div>
+  </section>
+
+  <!-- Revenue by Location + Top Products -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+    <div class="card">
+      <div class="card-header">📍 Revenue by City (Somalia)</div>
+      <div id="chart-location-revenue" style="height:320px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">🏆 Top 12 Products by Revenue</div>
+      <div id="chart-top-products" style="height:320px;"></div>
+    </div>
+  </section>
+
+  <!-- Category Profit Margin + Sales Rep Performance -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+    <div class="card">
+      <div class="card-header">💎 Profit Margin by Category</div>
+      <div id="chart-category-margin" style="height:320px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">👥 Sales Rep Revenue</div>
+      <div id="chart-sales-rep" style="height:320px;"></div>
+    </div>
+  </section>
+
+  <!-- Price Tier + Payment Method -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 fade-in">
+    <div class="card">
+      <div class="card-header">💰 Price Tier Distribution</div>
+      <div id="chart-price-tier" style="height:260px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">💳 Payment Methods</div>
+      <div id="chart-payment-method" style="height:260px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">📦 Category Volume</div>
+      <div id="chart-category-volume" style="height:260px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">📊 Category Revenue Mix</div>
+      <div id="chart-category-mix" style="height:260px;"></div>
+    </div>
+  </section>
+
+  <!-- ML Model Comparison -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+    <div class="card">
+      <div class="card-header">🧪 Model Performance Comparison (R²)</div>
+      <div id="chart-model-compare" style="height:300px;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">🔬 Top 15 Features (Feature Importance)</div>
+      <div id="chart-feature-importance" style="height:300px;"></div>
+    </div>
+  </section>
+
+  <!-- ML Metrics Table + Monthly Category Heatmap -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 fade-in">
+    <div class="card">
+      <div class="card-header">📋 Model Metrics Detail</div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400">
+              <th class="text-left py-3 px-3 font-semibold">Model</th>
+              <th class="text-right py-3 px-3 font-semibold">R² Score</th>
+              <th class="text-right py-3 px-3 font-semibold">MAE</th>
+              <th class="text-right py-3 px-3 font-semibold">RMSE</th>
+              <th class="text-right py-3 px-3 font-semibold">MAPE</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-3 px-3 font-semibold text-white">ExtraTrees</td>
+              <td class="py-3 px-3 text-right font-mono">0.9643</td>
+              <td class="py-3 px-3 text-right font-mono">$17</td>
+              <td class="py-3 px-3 text-right font-mono">$104</td>
+              <td class="py-3 px-3 text-right font-mono">1.4%</td>
+            </tr>
+            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-3 px-3 font-semibold text-white">RandomForest ★</td>
+              <td class="py-3 px-3 text-right font-mono">0.9804</td>
+              <td class="py-3 px-3 text-right font-mono">$18</td>
+              <td class="py-3 px-3 text-right font-mono">$77</td>
+              <td class="py-3 px-3 text-right font-mono">2.9%</td>
+            </tr>
+            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-3 px-3 font-semibold text-white">HistGradientBoosting</td>
+              <td class="py-3 px-3 text-right font-mono">0.9721</td>
+              <td class="py-3 px-3 text-right font-mono">$31</td>
+              <td class="py-3 px-3 text-right font-mono">$92</td>
+              <td class="py-3 px-3 text-right font-mono">6.3%</td>
+            </tr>
+            <tr class="border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors">
+              <td class="py-3 px-3 font-semibold text-white">BusinessRule_Quantity_x_Price</td>
+              <td class="py-3 px-3 text-right font-mono">1.0000</td>
+              <td class="py-3 px-3 text-right font-mono">$0</td>
+              <td class="py-3 px-3 text-right font-mono">$0</td>
+              <td class="py-3 px-3 text-right font-mono">0.0%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-4 p-3 bg-slate-800/50 rounded-xl border border-slate-700">
+        <p class="text-xs text-slate-400"><span class="text-purple-400 font-semibold">Preprocessing:</span> Median impute → IQR capping (Q1−1.5·IQR / Q3+1.5·IQR) → StandardScaler</p>
+        <p class="text-xs text-slate-400"><span class="text-purple-400 font-semibold">Categoricals:</span> Rare-level group (&lt;1% → OTHER) → OneHotEncoder(handle_unknown="ignore")</p>
+        <p class="text-xs text-slate-400"><span class="text-purple-400 font-semibold">Train/Test:</span> 796 train / 204 test (stratified by Category, 80/20)</p>
+        <p class="text-xs text-slate-400"><span class="text-purple-400 font-semibold">Target validation:</span> LEAKAGE_SAFE_CHRONOLOGICAL_EVALUATION — best univariate feature: Quantity × Unit_Price_USD business rule (R²=1.0)</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">📅 Monthly Revenue by Category</div>
+      <div id="chart-monthly-category" style="height:300px;"></div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-slate-600 text-xs py-8 border-t border-slate-800">
+    Kaamil Technology Sales Analytics · Built with Python (pandas, scikit-learn, ApexCharts) · 2026-09-02T17:53:21.607384
+  </footer>
+
+</main>
+
+<script>
+const SERIES = {
+  catLabels: ["Accessories", "Laptops", "Mobile Phones", "Tablets"],
+  catValues: [112671.0, 168740.0, 261329.0, 58290.0],
+  locLabels: ["Bosaso", "Garowe", "Burao", "Galkayo", "Baidoa", "Hargeisa", "Mogadishu", "Kismayo"],
+  locValues: [88617.0, 76821.0, 76779.0, 74259.0, 71841.0, 71606.0, 70945.0, 70162.0],
+  repLabels: ["Abdirizak Noor", "Muna Said", "Mahad Ahmed", "Sharmaarke Ali", "Zahra Jama", "Fadumo Hussein"],
+  repValues: [113990.0, 112439.0, 105191.0, 101537.0, 85753.0, 82120.0],
+  monthLabels: ["Jun", "Jul", "Aug"],
+  monthValues: [205948.0, 196788.0, 198294.0],
+  monthlyCatDatasets: [{"name": "Accessories", "data": [35014.0, 35891.0, 41766.0], "color": "#2563eb"}, {"name": "Laptops", "data": [62500.0, 49620.0, 56620.0], "color": "#059669"}, {"name": "Mobile Phones", "data": [84114.0, 91257.0, 85958.0], "color": "#d97706"}, {"name": "Tablets", "data": [24320.0, 20020.0, 13950.0], "color": "#7c3aed"}],
+  tierLabels: ["Mid", "Flagship", "Budget", "Premium"],
+  tierValues: [342.0, 271.0, 201.0, 186.0],
+  marginLabels: ["Accessories", "Laptops", "Mobile Phones", "Tablets"],
+  marginValues: [37.12828641074235, 18.479405654165664, 19.56805082035439, 19.182028860887023],
+  prodLabels: ["MacBook Pro M3 512GB", "iPhone 16 Pro Max 256GB", "Samsung Galaxy S25 Ultra", "iPhone 15 128GB", "iPhone 16 Pro 128GB", "Apple AirPods Pro 2", "iPad Air M2 11-inch", "MacBook Air M2 256GB", "Samsung Galaxy S24 FE", "Samsung Galaxy Buds 2 Pro", "HP ProBook 450 G10", "JBL Charge 5 Bluetooth Speaker"],
+  prodValues: [62010.0, 52480.0, 48960.0, 40560.0, 40330.0, 40275.0, 34220.0, 30690.0, 29580.0, 26550.0, 24400.0, 21390.0],
+  pmLabels: ["Cash USD", "eDahab", "EVC Plus", "Sahal", "Zaad", "Premier Wallet"],
+  pmValues: [180.0, 177.0, 164.0, 164.0, 159.0, 156.0],
+  ccLabels: ["Mobile Phones", "Accessories", "Laptops", "Tablets"],
+  ccValues: [417.0, 281.0, 203.0, 99.0],
+  featLabels: [],
+  featValues: [],
+  catMixValues: [112671.0, 168740.0, 261329.0, 58290.0],
+  catMarginData: [{"label": "Accessories", "margin": 37.12828641074235, "revenue": 112671.0}, {"label": "Laptops", "margin": 18.479405654165664, "revenue": 168740.0}, {"label": "Mobile Phones", "margin": 19.56805082035439, "revenue": 261329.0}, {"label": "Tablets", "margin": 19.182028860887023, "revenue": 58290.0}],
+};
+
+const CHART_COLORS = {
+  blue: '#3b82f6', green: '#10b981', amber: '#f59e0b', purple: '#a855f7',
+  red: '#ef4444', cyan: '#06b6d4', pink: '#ec4899', indigo: '#6366f1',
+};
+
+const chartDefaults = {
+  theme: { mode: 'dark' },
+  toolbar: { show: true, tools: { download: true, zoom: false, pan: false, reset: true } },
+  stroke: { curve: 'smooth', width: 2 },
+  fill: { type: 'gradient', gradient: { opacityFrom: 0.3, opacityTo: 0.05 } },
+  grid: { borderColor: '#1e293b', strokeDashArray: 4 },
+  xaxis: { labels: { style: { colors: '#94a3b8', fontSize: 11 } } },
+  yaxis: { labels: { style: { colors: '#94a3b8', fontSize: 11 } } },
+  legend: { labels: { style: { colors: '#cbd5e1', fontSize: 11 } } },
+  tooltip: { theme: 'dark' },
+};
+
+// 1. Revenue by Category
+new ApexCharts(document.querySelector('#chart-category-revenue'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 320 },
+  series: [{ name: 'Revenue ($)', data: SERIES.catValues }],
+  xaxis: { categories: SERIES.catLabels },
+  plotOptions: { bar: { borderRadius: 8, columnWidth: '55%' } },
+  colors: [CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.purple],
+  dataLabels: { enabled: true, style: { colors: ['#e2e8f0'] }, formatter: v => '$' + v.toLocaleString() },
+}).render();
+
+// 2. Monthly Trend
+new ApexCharts(document.querySelector('#chart-monthly-trend'), {
+  ...chartDefaults,
+  chart: { type: 'area', height: 320 },
+  series: [{ name: 'Monthly Revenue', data: SERIES.monthValues }],
+  xaxis: { categories: SERIES.monthLabels },
+  stroke: { curve: 'smooth', width: 3 },
+  fill: { type: 'gradient', gradient: { opacityFrom: 0.4, opacityTo: 0.02 } },
+  colors: [CHART_COLORS.green],
+  markers: { size: 6, colors: ['#10b981'], strokeColor: '#065f46', strokeWidth: 2 },
+  yaxis: { labels: { style: { colors: '#94a3b8', fontSize: 11 } }, formatter: v => '$' + v.toLocaleString() },
+}).render();
+
+// 3. Location Revenue
+new ApexCharts(document.querySelector('#chart-location-revenue'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 320 },
+  series: [{ name: 'Revenue ($)', data: SERIES.locValues }],
+  xaxis: { categories: SERIES.locLabels, labels: { style: { colors: '#94a3b8', fontSize: 11 } } },
+  plotOptions: { bar: { borderRadius: 6, columnWidth: '60%', horizontal: true } },
+  colors: [CHART_COLORS.indigo],
+  dataLabels: { enabled: true, style: { colors: ['#e2e8f0'] }, formatter: v => '$' + v.toLocaleString() },
+}).render();
+
+// 4. Top Products
+new ApexCharts(document.querySelector('#chart-top-products'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 320 },
+  series: [{ name: 'Revenue ($)', data: SERIES.prodValues }],
+  xaxis: { categories: SERIES.prodLabels, labels: { style: { colors: '#94a3b8', fontSize: 10 } } },
+  plotOptions: { bar: { borderRadius: 6, columnWidth: '70%', horizontal: true } },
+  colors: [CHART_COLORS.amber, CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.purple, CHART_COLORS.red, CHART_COLORS.cyan, CHART_COLORS.pink, CHART_COLORS.indigo, CHART_COLORS.amber, CHART_COLORS.green, CHART_COLORS.blue, CHART_COLORS.purple],
+  dataLabels: { enabled: true, style: { colors: ['#e2e8f0'] }, formatter: v => '$' + v.toLocaleString() },
+}).render();
+
+// 5. Category Margin
+new ApexCharts(document.querySelector('#chart-category-margin'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 320 },
+  series: [{ name: 'Profit Margin (%)', data: SERIES.marginValues }],
+  xaxis: { categories: SERIES.marginLabels },
+  plotOptions: { bar: { borderRadius: 8, columnWidth: '50%' } },
+  colors: [CHART_COLORS.green, CHART_COLORS.blue, CHART_COLORS.amber, CHART_COLORS.purple],
+  dataLabels: { enabled: true, style: { colors: ['#e2e8f0'] }, formatter: v => v.toFixed(1) + '%' },
+}).render();
+
+// 6. Sales Rep
+new ApexCharts(document.querySelector('#chart-sales-rep'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 320 },
+  series: [{ name: 'Revenue ($)', data: SERIES.repValues }],
+  xaxis: { categories: SERIES.repLabels, labels: { style: { colors: '#94a3b8', fontSize: 10 } } },
+  plotOptions: { bar: { borderRadius: 6, columnWidth: '60%', horizontal: true } },
+  colors: [CHART_COLORS.purple, CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.cyan, CHART_COLORS.pink],
+  dataLabels: { enabled: true, style: { colors: ['#e2e8f0'] }, formatter: v => '$' + v.toLocaleString() },
+}).render();
+
+// 7. Price Tier Doughnut
+new ApexCharts(document.querySelector('#chart-price-tier'), {
+  ...chartDefaults,
+  chart: { type: 'donut', height: 260 },
+  series: SERIES.tierValues,
+  labels: SERIES.tierLabels,
+  colors: [CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.purple],
+  legend: { position: 'bottom', labels: { style: { colors: '#cbd5e1', fontSize: 11 } } },
+}).render();
+
+// 8. Payment Method Doughnut
+new ApexCharts(document.querySelector('#chart-payment-method'), {
+  ...chartDefaults,
+  chart: { type: 'donut', height: 260 },
+  series: SERIES.pmValues,
+  labels: SERIES.pmLabels,
+  colors: [CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.purple, CHART_COLORS.red, CHART_COLORS.cyan],
+  legend: { position: 'bottom', labels: { style: { colors: '#cbd5e1', fontSize: 11 } } },
+}).render();
+
+// 9. Category Volume
+new ApexCharts(document.querySelector('#chart-category-volume'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 260 },
+  series: [{ name: 'Transactions', data: SERIES.ccValues }],
+  xaxis: { categories: SERIES.ccLabels },
+  plotOptions: { bar: { borderRadius: 8, columnWidth: '50%' } },
+  colors: [CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.purple],
+  dataLabels: { enabled: true, style: { colors: ['#e2e8f0'] } },
+}).render();
+
+// 10. Category Mix (100% stacked)
+new ApexCharts(document.querySelector('#chart-category-mix'), {
+  ...chartDefaults,
+  chart: { type: 'pie', height: 260 },
+  series: SERIES.catMixValues,
+  labels: SERIES.catLabels,
+  colors: [CHART_COLORS.blue, CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.purple],
+  legend: { position: 'bottom', labels: { style: { colors: '#cbd5e1', fontSize: 11 } } },
+}).render();
+
+// 11. Model Comparison
+new ApexCharts(document.querySelector('#chart-model-compare'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 300 },
+  series: [
+    { name: 'R²', data: Object.values({"ExtraTrees": {"mae": 16.6675, "rmse": 104.0274, "r2_score": 0.964295, "mape_pct": 1.4155}, "RandomForest": {"mae": 17.6692, "rmse": 77.0146, "r2_score": 0.98043, "mape_pct": 2.8805}, "HistGradientBoosting": {"mae": 30.5949, "rmse": 92.024, "r2_score": 0.972059, "mape_pct": 6.3221}, "BusinessRule_Quantity_x_Price": {"mae": 0.0, "rmse": 0.0, "r2_score": 1.0, "mape_pct": 0.0}}).map(m => m.r2_score) },
+    { name: 'MAPE %', data: Object.values({"ExtraTrees": {"mae": 16.6675, "rmse": 104.0274, "r2_score": 0.964295, "mape_pct": 1.4155}, "RandomForest": {"mae": 17.6692, "rmse": 77.0146, "r2_score": 0.98043, "mape_pct": 2.8805}, "HistGradientBoosting": {"mae": 30.5949, "rmse": 92.024, "r2_score": 0.972059, "mape_pct": 6.3221}, "BusinessRule_Quantity_x_Price": {"mae": 0.0, "rmse": 0.0, "r2_score": 1.0, "mape_pct": 0.0}}).map(m => m.mape_pct) },
+  ],
+  xaxis: { categories: Object.keys({"ExtraTrees": {"mae": 16.6675, "rmse": 104.0274, "r2_score": 0.964295, "mape_pct": 1.4155}, "RandomForest": {"mae": 17.6692, "rmse": 77.0146, "r2_score": 0.98043, "mape_pct": 2.8805}, "HistGradientBoosting": {"mae": 30.5949, "rmse": 92.024, "r2_score": 0.972059, "mape_pct": 6.3221}, "BusinessRule_Quantity_x_Price": {"mae": 0.0, "rmse": 0.0, "r2_score": 1.0, "mape_pct": 0.0}}) },
+  plotOptions: { bar: { borderRadius: 8, columnWidth: '40%' } },
+  colors: [CHART_COLORS.green, CHART_COLORS.amber],
+}).render();
+
+// 12. Feature Importance
+new ApexCharts(document.querySelector('#chart-feature-importance'), {
+  ...chartDefaults,
+  chart: { type: 'bar', height: 300 },
+  series: [{ name: 'Importance', data: SERIES.featValues }],
+  xaxis: { categories: SERIES.featLabels, labels: { style: { colors: '#94a3b8', fontSize: 9 } } },
+  plotOptions: { bar: { borderRadius: 4, columnWidth: '70%', horizontal: true } },
+  colors: [CHART_COLORS.indigo],
+  dataLabels: { enabled: true, style: { colors: ['#94a3b8'] }, formatter: v => v.toFixed(3) },
+}).render();
+
+// 13. Monthly Category stacked area
+new ApexCharts(document.querySelector('#chart-monthly-category'), {
+  ...chartDefaults,
+  chart: { type: 'area', height: 300, stacked: true },
+  series: SERIES.monthlyCatDatasets.map(d => ({ name: d.name, data: d.data })),
+  xaxis: { categories: SERIES.monthLabels },
+  colors: SERIES.monthlyCatDatasets.map(d => d.color),
+  stroke: { curve: 'smooth', width: 2 },
+  fill: { type: 'gradient', gradient: { opacityFrom: 0.3, opacityTo: 0.05 } },
+  yaxis: { labels: { style: { colors: '#94a3b8' }, formatter: v => '$' + v.toLocaleString() } },
+}).render();
+</script>
+</body>
+</html>

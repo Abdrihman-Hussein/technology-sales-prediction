@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+.env.*
+output/*.pkl
+output/model.pkl
+output/preprocessor.pkl
+output/test_results_sample.csv
+output/predictions.csv
+output/results.json
+output/eda_profile.json
+*.log
+data/*_clean.csv
