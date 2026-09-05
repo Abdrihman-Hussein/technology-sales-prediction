@@ -28,6 +28,8 @@ raw CSV → validation → daily revenue → lag/calendar features → chronolog
 
 ## Quick start
 
+### Option 1: Local setup
+
 ```bash
 # Install dependencies
 python -m pip install -r requirements.txt
@@ -40,6 +42,17 @@ python -m src.cli forecast
 
 # Start web server
 python -m src.cli serve --port 5001
+```
+
+### Option 2: Docker
+
+```bash
+# Build and run with docker-compose
+docker compose up --build
+
+# Or build manually
+docker build -t kaamil-forecast .
+docker run -p 5001:5001 kaamil-forecast
 ```
 
 Open [http://127.0.0.1:5001](http://127.0.0.1:5001).

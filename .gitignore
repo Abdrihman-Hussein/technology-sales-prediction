@@ -1,5 +1,6 @@
 __pycache__/
 *.py[cod]
+*.pyo
 .venv/
 venv/
 env/
@@ -15,3 +16,13 @@ output/results.json
 output/eda_profile.json
 *.log
 data/*_clean.csv
+.pytest_cache/
+.coverage
+htmlcov/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+node_modules/
