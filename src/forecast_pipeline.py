@@ -1,11 +1,14 @@
 """Next-calendar-month revenue forecasting pipeline."""
 from __future__ import annotations
-import json, pickle
+import json, logging, pickle
 from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
+from src.validate import validate_csv
+
+logger = logging.getLogger("kaamil.pipeline")
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW, OUT = ROOT / "data" / "kaamil_technology_sales_1000.csv", ROOT / "output"
@@ -34,7 +37,15 @@ def recursive_forecast(model, history, horizon):
     return pd.DataFrame(rows)
 
 def main():
-    OUT.mkdir(exist_ok=True); series = daily_series(); frame = feature_frame(series)
+    OUT.mkdir(exist_ok=True)
+
+    report = validate_csv(RAW)
+    if not report.is_valid:
+        raise SystemExit(f"Data validation failed: {report.errors}")
+    logger.info("Data validated: %d rows, date range %s–%s",
+                report.row_count, report.date_range[0], report.date_range[1])
+
+    series = daily_series(); frame = feature_frame(series)
     test_days = min(30, max(14, len(frame) // 4)); train, test = frame.iloc[:-test_days], frame.iloc[-test_days:]
     model = RandomForestRegressor(n_estimators=500, min_samples_leaf=2, max_features=0.8, random_state=42, n_jobs=-1)
     model.fit(train[FEATURES], train.revenue); backtest_pred = model.predict(test[FEATURES])
