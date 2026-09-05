@@ -1,6 +1,10 @@
 # Kaamil Technology Sales — Next-Month Revenue Forecasting
 
-An end-to-end machine-learning project that forecasts the next calendar month’s sales revenue from daily transaction history. It includes data preparation, time-series feature engineering, chronological backtesting, an uncertainty range, and a lightweight Flask web application.
+[![CI](https://github.com/your-username/kaamil-technology-sales/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/kaamil-technology-sales/actions)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
+An end-to-end machine-learning project that forecasts the next calendar month's sales revenue from daily transaction history. It includes data preparation, time-series feature engineering, chronological backtesting, an uncertainty range, and a lightweight Flask web application.
 
 > **Current forecast:** September 2026 projected revenue is **$182,553**, with a 90% planning range of **$160,675–$204,431**. The model was trained on June–August 2026 sales data.
 
@@ -13,14 +17,40 @@ This is a forecasting problem, not a transaction calculator. The pipeline aggreg
 ## Architecture
 
 ```text
-raw CSV → daily revenue → lag/calendar features → chronological backtest
-                                                   ↓
-                                      Random Forest forecaster
-                                                   ↓
-                           next-month forecast + planning interval
-                                                   ↓
-                                  Flask web app / JSON API
+raw CSV → validation → daily revenue → lag/calendar features → chronological backtest
+                                                                    ↓
+                                                        Random Forest forecaster
+                                                                    ↓
+                                            next-month forecast + planning interval
+                                                                    ↓
+                                                  Flask web app / JSON API
 ```
+
+## Quick start
+
+```bash
+# Install dependencies
+python -m pip install -r requirements.txt
+
+# Validate data
+python -m src.validate data/kaamil_technology_sales_1000.csv
+
+# Run forecast
+python -m src.cli forecast
+
+# Start web server
+python -m src.cli serve --port 5001
+```
+
+Open [http://127.0.0.1:5001](http://127.0.0.1:5001).
+
+## CLI commands
+
+| Command | Description |
+|---------|-------------|
+| `python -m src.cli forecast` | Run the forecasting pipeline |
+| `python -m src.cli validate` | Validate raw CSV data |
+| `python -m src.cli serve` | Start the Flask web server |
 
 ## Model design
 
@@ -44,33 +74,32 @@ raw CSV → daily revenue → lag/calendar features → chronological backtest
 
 The dataset covers only three months. These results are a prototype and planning aid, not evidence of long-term seasonal performance. Add at least 12–24 months of daily history before using this for high-stakes budgeting.
 
-## Run locally
-
-```powershell
-python -m pip install -r requirements.txt
-python src/forecast_pipeline.py
-python app.py
-```
-
-Open [http://127.0.0.1:5001](http://127.0.0.1:5001).
-
-API endpoints: `GET /forecast` returns the latest forecast JSON and `GET /health` returns service status.
-
 ## Repository map
 
 ```text
 app.py                         Flask web app and API
-src/forecast_pipeline.py      forecasting, backtesting, and artifacts
+config.py                      project configuration and logging
+src/forecast_pipeline.py       forecasting, backtesting, and artifacts
+src/validate.py                data validation module
+src/cli.py                     command-line interface
+tests/test_pipeline.py         unit tests
 data/                          raw transaction data
-output/next_month_forecast.json latest forecast summary
-output/next_month_daily_forecast.csv daily forecast detail
+output/next_month_forecast.json  latest forecast summary
+output/next_month_daily_forecast.csv  daily forecast detail
 templates/index.html           forecast presentation page
+.github/workflows/ci.yml       GitHub Actions CI pipeline
+.env.example                   environment configuration template
+CONTRIBUTING.md                contribution guidelines
 PROJECT_PLAN.md                roadmap and research plan
 ```
 
 ## Responsible interpretation
 
 The forecast does not know about promotions, stock-outs, holidays, price changes, new branches, macroeconomic shocks, or changes in customer behavior. The next version should add those variables, monitor drift, compare against seasonal baselines, and retrain on a rolling schedule.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development setup and guidelines.
 
 ## Roadmap
 
