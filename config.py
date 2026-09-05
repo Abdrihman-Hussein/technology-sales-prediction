@@ -3,10 +3,19 @@
 All paths are relative to the project root (kaamil-technology-sales/).
 Data directory can be overridden via TC_DATA_DIR env var (useful on Kaggle/Colab).
 """
+import logging
 import os
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+logging.basicConfig(
+    level=getattr(logging, LOG_LEVEL, logging.INFO),
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger("kaamil")
 
 # Data paths
 DATA_DIR = Path(os.environ.get("TC_DATA_DIR", str(PROJECT_ROOT / "data")))

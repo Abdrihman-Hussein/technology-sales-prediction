@@ -1,5 +1,6 @@
 """Interactive next-month revenue forecast web application."""
 import json
+import os
 from pathlib import Path
 from flask import Flask, jsonify, render_template
 
@@ -21,4 +22,7 @@ def forecast(): return jsonify(read_forecast())
 @app.get("/health")
 def health(): return jsonify(status="ok", forecast_available=(ROOT / "output" / "next_month_forecast.json").exists())
 
-if __name__ == "__main__": app.run(host="127.0.0.1", port=5001, debug=False)
+if __name__ == "__main__":
+    port = int(os.environ.get("FLASK_PORT", 5001))
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="127.0.0.1", port=port, debug=debug)
