@@ -1,0 +1,51 @@
+# Kaamil Technology Sales
+
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Output artifacts
+output/*.pkl
+output/model.pkl
+output/preprocessor.pkl
+output/test_results_sample.csv
+output/predictions.csv
+output/results.json
+output/eda_profile.json
+
+# Logs
+*.log
+
+# Processed data
+data/*_clean.csv
+
+# Docker
+.dockerignore
+
+# Test
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node (if any)
+node_modules/
